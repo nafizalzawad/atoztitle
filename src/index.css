@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 210 60% 25%;
+    --primary-foreground: 210 20% 98%;
+
+    --secondary: 185 45% 42%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 15% 93%;
+    --muted-foreground: 215 12% 50%;
+
+    --accent: 185 45% 42%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 152 55% 40%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 205 80% 50%;
+    --info-foreground: 0 0% 100%;
+
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 210 60% 25%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 210 60% 20%;
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 185 45% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 50% 28%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 210 40% 30%;
+    --sidebar-ring: 185 45% 50%;
+    --sidebar-muted: 210 30% 35%;
+
+    /* Stage colors */
+    --stage-lead: 210 60% 50%;
+    --stage-warm-lead: 25 85% 55%;
+    --stage-prospect: 270 50% 55%;
+    --stage-warm-prospect: 340 65% 55%;
+    --stage-client: 152 55% 40%;
+    --stage-active-client: 152 70% 35%;
+
+    /* KPI card gradient */
+    --gradient-primary: linear-gradient(135deg, hsl(210 60% 25%), hsl(210 60% 35%));
+    --gradient-secondary: linear-gradient(135deg, hsl(185 45% 42%), hsl(185 45% 52%));
+    --gradient-success: linear-gradient(135deg, hsl(152 55% 40%), hsl(152 55% 50%));
+    --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%), hsl(38 92% 60%));
+
+    --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
+    --shadow-elevated: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .dark {
+    --background: 215 25% 10%;
+    --foreground: 210 20% 90%;
+    --card: 215 25% 13%;
+    --card-foreground: 210 20% 90%;
+    --popover: 215 25% 13%;
+    --popover-foreground: 210 20% 90%;
+    --primary: 185 45% 50%;
+    --primary-foreground: 215 25% 10%;
+    --secondary: 210 40% 30%;
+    --secondary-foreground: 210 20% 90%;
+    --muted: 215 20% 18%;
+    --muted-foreground: 215 12% 55%;
+    --accent: 185 45% 42%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 152 55% 40%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --info: 205 80% 50%;
+    --info-foreground: 0 0% 100%;
+    --border: 215 20% 22%;
+    --input: 215 20% 22%;
+    --ring: 185 45% 50%;
+    --sidebar-background: 215 30% 8%;
+    --sidebar-foreground: 210 20% 85%;
+    --sidebar-primary: 185 45% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 25% 15%;
+    --sidebar-accent-foreground: 210 20% 90%;
+    --sidebar-border: 215 20% 18%;
+    --sidebar-ring: 185 45% 50%;
+    --sidebar-muted: 215 20% 25%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  .gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+  .gradient-success {
+    background: var(--gradient-success);
+  }
+  .gradient-warning {
+    background: var(--gradient-warning);
+  }
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+}
