@@ -56,12 +56,19 @@ export default function Contacts() {
     if (stageFilter && c.stage !== stageFilter) return false;
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
+
+    const firstName = c.first_name?.toLowerCase() || '';
+    const lastName = c.last_name?.toLowerCase() || '';
+    const email = c.email?.toLowerCase() || '';
+    const phone = c.phone || '';
+    const company = c.company?.toLowerCase() || '';
+
     return (
-      c.first_name?.toLowerCase().includes(q) ||
-      c.last_name?.toLowerCase().includes(q) ||
-      c.email?.toLowerCase().includes(q) ||
-      c.phone?.includes(q) ||
-      c.company?.toLowerCase().includes(q)
+      firstName.includes(q) ||
+      lastName.includes(q) ||
+      email.includes(q) ||
+      phone.includes(q) ||
+      company.includes(q)
     );
   });
 

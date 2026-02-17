@@ -27,7 +27,6 @@ const navItems: NavItem[] = [
   { label: 'Contacts', icon: Users, path: '/contacts' },
   { label: 'Add Contact', icon: UserPlus, path: '/contacts/new' },
   { label: 'Events', icon: Calendar, path: '/events' },
-  { label: 'Add Event', icon: CalendarPlus, path: '/events/new' },
   { label: 'Follow-ups', icon: CalendarCheck, path: '/follow-ups' },
   { label: 'Reports', icon: BarChart3, path: '/reports', adminOnly: true },
   { label: 'Admin', icon: Shield, path: '/admin', adminOnly: true },
