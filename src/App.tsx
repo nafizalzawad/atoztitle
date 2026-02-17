@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import Contacts from "./pages/Contacts";
 import NewContact from "./pages/NewContact";
 import ContactDetail from "./pages/ContactDetail";
+import Events from "./pages/Events";
+import AddEvent from "./pages/AddEvent";
 import FollowUps from "./pages/FollowUps";
 import Reports from "./pages/Reports";
 import Admin from "./pages/Admin";
@@ -55,6 +57,8 @@ const App = () => (
             <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
             <Route path="/contacts/new" element={<ProtectedRoute><NewContact /></ProtectedRoute>} />
             <Route path="/contacts/:id" element={<ProtectedRoute><ContactDetail /></ProtectedRoute>} />
+            <Route path="/events" element={<ProtectedRoute><Events /></ProtectedRoute>} />
+            <Route path="/events/new" element={<ProtectedRoute><AddEvent /></ProtectedRoute>} />
             <Route path="/follow-ups" element={<ProtectedRoute><FollowUps /></ProtectedRoute>} />
             <Route path="/reports" element={<AdminRoute><Reports /></AdminRoute>} />
             <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />

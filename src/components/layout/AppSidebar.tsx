@@ -5,6 +5,8 @@ import {
   Users,
   UserPlus,
   CalendarCheck,
+  Calendar,
+  CalendarPlus,
   BarChart3,
   Settings,
   LogOut,
@@ -24,6 +26,8 @@ const navItems: NavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   { label: 'Contacts', icon: Users, path: '/contacts' },
   { label: 'Add Contact', icon: UserPlus, path: '/contacts/new' },
+  { label: 'Events', icon: Calendar, path: '/events' },
+  { label: 'Add Event', icon: CalendarPlus, path: '/events/new' },
   { label: 'Follow-ups', icon: CalendarCheck, path: '/follow-ups' },
   { label: 'Reports', icon: BarChart3, path: '/reports', adminOnly: true },
   { label: 'Admin', icon: Shield, path: '/admin', adminOnly: true },
@@ -54,7 +58,7 @@ export function AppSidebar() {
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 py-4">
         {filteredItems.map((item) => {
-          const isActive = location.pathname === item.path || 
+          const isActive = location.pathname === item.path ||
             (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
           return (
             <button
