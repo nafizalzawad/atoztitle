@@ -15,6 +15,7 @@ import AddEvent from "./pages/AddEvent";
 import FollowUps from "./pages/FollowUps";
 import Reports from "./pages/Reports";
 import Admin from "./pages/Admin";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import { Loader2 } from "lucide-react";
 
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="/follow-ups" element={<ProtectedRoute><FollowUps /></ProtectedRoute>} />
             <Route path="/reports" element={<AdminRoute><Reports /></AdminRoute>} />
             <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
+            <Route path="/admin-dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

@@ -6,12 +6,11 @@ import {
   UserPlus,
   CalendarCheck,
   Calendar,
-  CalendarPlus,
   BarChart3,
-  Settings,
   LogOut,
   Shield,
   Building2,
+  PieChart,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -28,6 +27,7 @@ const navItems: NavItem[] = [
   { label: 'Add Contact', icon: UserPlus, path: '/contacts/new' },
   { label: 'Events', icon: Calendar, path: '/events' },
   { label: 'Follow-ups', icon: CalendarCheck, path: '/follow-ups' },
+  { label: 'Admin Dashboard', icon: PieChart, path: '/admin-dashboard', adminOnly: true },
   { label: 'Reports', icon: BarChart3, path: '/reports', adminOnly: true },
   { label: 'Admin', icon: Shield, path: '/admin', adminOnly: true },
 ];
