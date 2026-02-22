@@ -37,9 +37,8 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const filteredItems = navItems.filter(
-    (item) => !item.adminOnly || role === 'admin'
-  );
+  const mainItems = navItems.filter((item) => !item.adminOnly);
+  const adminItems = navItems.filter((item) => item.adminOnly && role === 'admin');
 
   return (
     <aside className="flex h-screen w-64 flex-col bg-sidebar text-sidebar-foreground">
@@ -55,8 +54,8 @@ export function AppSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {filteredItems.map((item) => {
+      <nav className="flex-1 space-y-1 px-3 py-4 overflow-y-auto">
+        {mainItems.map((item) => {
           const isActive = location.pathname === item.path ||
             (item.path !== '/dashboard' && location.pathname.startsWith(item.path));
           return (
@@ -75,6 +74,33 @@ export function AppSidebar() {
             </button>
           );
         })}
+
+        {adminItems.length > 0 && (
+          <>
+            <div className="my-4 border-t border-sidebar-border mx-3" />
+            <p className="px-6 mb-2 text-[10px] font-bold uppercase tracking-widest text-sidebar-muted">
+              Management
+            </p>
+            {adminItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => navigate(item.path)}
+                  className={cn(
+                    'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                      : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                  )}
+                >
+                  <item.icon className="h-4 w-4" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </>
+        )}
       </nav>
 
       {/* User section */}

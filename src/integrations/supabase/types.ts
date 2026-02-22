@@ -139,7 +139,13 @@ export type Database = {
           deal_date: string
           deal_value: number
           id: string
+          lenders_insurance: number
+          lenders_title: number
           notes: string | null
+          order_status: string
+          owners_title: number
+          settlement_fee: number
+          source_of_business: string | null
         }
         Insert: {
           bd_user_id: string
@@ -148,7 +154,13 @@ export type Database = {
           deal_date: string
           deal_value: number
           id?: string
+          lenders_insurance?: number
+          lenders_title?: number
           notes?: string | null
+          order_status?: string
+          owners_title?: number
+          settlement_fee?: number
+          source_of_business?: string | null
         }
         Update: {
           bd_user_id?: string
@@ -157,7 +169,13 @@ export type Database = {
           deal_date?: string
           deal_value?: number
           id?: string
+          lenders_insurance?: number
+          lenders_title?: number
           notes?: string | null
+          order_status?: string
+          owners_title?: number
+          settlement_fee?: number
+          source_of_business?: string | null
         }
         Relationships: [
           {
@@ -292,11 +310,33 @@ export type Database = {
           },
         ]
       }
+      groups: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           email: string
           full_name: string
+          group_id: string | null
           id: string
           is_active: boolean
           updated_at: string
@@ -305,6 +345,7 @@ export type Database = {
           created_at?: string
           email: string
           full_name: string
+          group_id?: string | null
           id: string
           is_active?: boolean
           updated_at?: string
@@ -313,11 +354,20 @@ export type Database = {
           created_at?: string
           email?: string
           full_name?: string
+          group_id?: string | null
           id?: string
           is_active?: boolean
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

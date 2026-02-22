@@ -46,6 +46,7 @@ export default function Contacts() {
     const { data } = await supabase
       .from('contacts')
       .select('*')
+      .eq('bd_user_id', user.id)
       .eq('is_deleted', false)
       .order('created_at', { ascending: false });
     setContacts(data || []);

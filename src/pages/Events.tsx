@@ -27,6 +27,7 @@ export default function Events() {
         const { data, error } = await supabase
             .from('events')
             .select('*')
+            .eq('user_id', user.id)
             .order('event_date', { ascending: false });
 
         if (data) {

@@ -23,6 +23,7 @@ export default function FollowUps() {
     const { data } = await supabase
       .from('follow_ups')
       .select('*, contacts(first_name, last_name, company, stage)')
+      .eq('bd_user_id', user.id)
       .eq('is_completed', false)
       .order('follow_up_date', { ascending: true });
     setFollowUps(data || []);

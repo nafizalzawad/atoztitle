@@ -83,6 +83,7 @@ export default function Dashboard() {
     const { data: contacts, error: contactsError } = await supabase
       .from('contacts')
       .select('id, first_name, last_name, company, stage')
+      .eq('bd_user_id', user.id)
       .eq('is_deleted', false);
 
     if (contactsError) {
@@ -107,6 +108,7 @@ export default function Dashboard() {
           company
         )
       `)
+      .eq('bd_user_id', user.id)
       .eq('is_completed', false)
       .order('follow_up_date', { ascending: true });
 
