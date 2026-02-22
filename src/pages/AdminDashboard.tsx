@@ -291,7 +291,7 @@ export default function AdminDashboard() {
                                                     className="hover:bg-muted/30 transition-colors cursor-pointer"
                                                     onClick={() => navigate(`/contacts?marketer=${m.id}`)}
                                                 >
-                                                    <td className="px-5 py-3.5">
+                                                    <td className="px-5 py-3.5" onClick={e => e.stopPropagation()}>
                                                         <div className="flex items-center gap-3">
                                                             <Avatar className="h-8 w-8">
                                                                 <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
@@ -299,7 +299,13 @@ export default function AdminDashboard() {
                                                                 </AvatarFallback>
                                                             </Avatar>
                                                             <div>
-                                                                <p className="font-medium">{m.full_name}</p>
+                                                                <button
+                                                                    className="font-medium text-left hover:text-primary hover:underline underline-offset-2 transition-colors focus:outline-none"
+                                                                    title={`View ${m.full_name}'s full report`}
+                                                                    onClick={() => navigate(`/admin/user/${m.id}`)}
+                                                                >
+                                                                    {m.full_name}
+                                                                </button>
                                                                 <p className="text-xs text-muted-foreground">{m.email}</p>
                                                             </div>
                                                         </div>

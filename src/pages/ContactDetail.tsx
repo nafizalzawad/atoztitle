@@ -67,59 +67,84 @@ export default function ContactDetail() {
   const [addingDeal, setAddingDeal] = useState(false);
 
   useEffect(() => {
-    if (!id || !user) return;
+    if (!id || !user || !role) return;
     loadAll();
-  }, [id, user]);
+  }, [id, user, role]);
 
   const loadAll = async () => {
     setLoading(true);
-    await Promise.all([
-      loadContact(),
-      loadFollowUps(),
-      loadExpenses(),
-      loadDeals(),
-    ]);
-    setLoading(false);
+    try {
+      await Promise.all([
+        loadContact(),
+        loadFollowUps(),
+        loadExpenses(),
+        loadDeals(),
+      ]);
+    } catch (err) {
+      console.error('ContactDetail loadAll error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loadContact = async () => {
-    const { data } = await supabase.from('contacts').select('*, profiles:bd_user_id(full_name)').eq('id', id).single();
-    setContact(data);
+    const { data, error } = await supabase
+      .from('contacts')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) console.error('ContactDetail loadContact error:', error.code, error.message, error.details);
+    if (data) {
+      // Fetch the owner's profile name separately (no direct FK contacts→public.profiles)
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', data.bd_user_id)
+        .single();
+      setContact({ ...data, profiles: profileData ?? null });
+    } else {
+      setContact(null);
+    }
   };
 
   const loadFollowUps = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('follow_ups')
       .select('*')
       .eq('contact_id', id)
       .order('follow_up_date', { ascending: false });
+    if (error) console.error('ContactDetail loadFollowUps error:', error.message);
     setFollowUps(data || []);
   };
 
   const loadExpenses = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('expenses')
       .select('*')
       .eq('contact_id', id)
       .order('created_at', { ascending: false });
+    if (error) console.error('ContactDetail loadExpenses error:', error.message);
     setExpenses(data || []);
   };
 
   const loadDeals = async () => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('deals')
       .select('*')
       .eq('contact_id', id)
       .order('deal_date', { ascending: false });
+    if (error) console.error('ContactDetail loadDeals error:', error.message);
     setDeals(data || []);
   };
 
   const addFollowUp = async () => {
     if (!fuDate || !user || !id) return;
     setAddingFU(true);
+    // Attribute to the contact's owner (not the admin who is adding it)
+    const ownerId = contact?.bd_user_id ?? user.id;
     const { error } = await supabase.from('follow_ups').insert({
       contact_id: id,
-      bd_user_id: user.id,
+      bd_user_id: ownerId,
       follow_up_date: fuDate,
       follow_up_time: fuTime || null,
       notes: fuNotes || null,
@@ -260,7 +285,7 @@ export default function ContactDetail() {
       entity_id: id,
     });
     toast.success('Contact deleted');
-    navigate('/contacts');
+    navigate(-1);
   };
 
   if (loading) return <AppLayout title="Loading..."><div className="p-12 text-center text-muted-foreground">Loading contact...</div></AppLayout>;
@@ -283,9 +308,10 @@ export default function ContactDetail() {
       title={`${contact.first_name} ${contact.last_name}`}
       subtitle={contact.company || undefined}
       actions={
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => navigate('/contacts')}>
-            <ArrowLeft className="mr-1 h-3.5 w-3.5" /> Back
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => navigate(-1)}>
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline ml-1">Back</span>
           </Button>
           {contact.is_dnc && (
             <span className="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-xs font-medium text-destructive">

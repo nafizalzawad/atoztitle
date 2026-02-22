@@ -138,4 +138,80 @@
   .shadow-elevated {
     box-shadow: var(--shadow-elevated);
   }
+  /* Hide scrollbar but keep functionality (for mobile pill rows) */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
+
+/* ── Mobile & PWA global fixes ────────────────────────────────── */
+
+/* Respect iPhone notch / home bar using safe-area insets */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Ensure the sidebar drawer respects the top safe area too */
+.sidebar-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Minimum touch-target size (WCAG 2.5.5 — 44×44px) */
+button,
+a,
+[role="button"],
+[type="button"],
+[type="submit"],
+input[type="checkbox"],
+input[type="radio"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Allow icon-only small buttons (Back, sidebar sign-out etc.) to have
+   a centered hit area without distorting visual size */
+button.h-8,
+button.h-10,
+.btn-icon {
+  position: relative;
+}
+button.h-8::after,
+button.h-10::after,
+.btn-icon::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+}
+
+/* Prevent iOS Safari from zooming inputs with font-size < 16px */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+}
+/* Allow explicit small overrides (e.g. text-xs labels) to pass through at read time */
+@media (min-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: inherit !important;
+  }
+}
+
+/* Remove iOS tap highlight */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth momentum scrolling in scroll areas */
+.overflow-y-auto,
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+

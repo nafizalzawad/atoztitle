@@ -21,6 +21,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+
 
 interface DashboardStats {
   leads: number;
@@ -79,21 +81,16 @@ export default function Dashboard() {
     const todayStr = new Date().toISOString().split('T')[0];
 
     // Fetch Contacts
-    console.log('Fetching contacts...');
     const { data: contacts, error: contactsError } = await supabase
       .from('contacts')
       .select('id, first_name, last_name, company, stage')
       .eq('bd_user_id', user.id)
       .eq('is_deleted', false);
 
-    if (contactsError) {
-      console.error('Error fetching contacts:', contactsError);
-    } else {
-      console.log('Contacts fetched:', contacts?.length, contacts);
-    }
+    if (contactsError) console.error('Dashboard contacts error:', contactsError);
 
     // Fetch Follow-ups with Contact details
-    console.log('Fetching followups...');
+
     const { data: followUpsData, error: followUpsError } = await supabase
       .from('follow_ups')
       .select(`
@@ -112,11 +109,7 @@ export default function Dashboard() {
       .eq('is_completed', false)
       .order('follow_up_date', { ascending: true });
 
-    if (followUpsError) {
-      console.error('Error fetching followups:', followUpsError);
-    } else {
-      console.log('Followups fetched:', followUpsData?.length, followUpsData);
-    }
+    if (followUpsError) console.error('Dashboard followups error:', followUpsError);
 
     if (contacts && followUpsData) {
       const pendingFollowUps = followUpsData.map((f: any) => ({
@@ -150,7 +143,6 @@ export default function Dashboard() {
         overdue: over,
       };
 
-      console.log('Calculated Stats:', newStats);
       setStats(newStats);
     }
     setLoading(false);
@@ -211,62 +203,91 @@ export default function Dashboard() {
                 No pending follow-ups. Good job!
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Contact</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Notes</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {followUps.slice(0, 5).map((f) => {
-                      const isOverdue = f.follow_up_date < new Date().toISOString().split('T')[0];
-                      const isToday = f.follow_up_date === new Date().toISOString().split('T')[0];
+              <>
+                {/* Mobile: simple card list */}
+                <div className="md:hidden space-y-3">
+                  {followUps.slice(0, 5).map((f) => {
+                    const isOverdue = f.follow_up_date < new Date().toISOString().split('T')[0];
+                    const isToday = f.follow_up_date === new Date().toISOString().split('T')[0];
+                    return (
+                      <div
+                        key={f.id}
+                        onClick={() => f.contact && navigate(`/contacts/${f.contact.id}`)}
+                        className={cn(
+                          'flex items-center gap-3 rounded-lg border p-3 cursor-pointer active:bg-muted/50',
+                          isOverdue ? 'border-destructive/30 bg-destructive/5' : 'border-border'
+                        )}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">
+                            {f.contact ? `${f.contact.first_name} ${f.contact.last_name}` : 'Unknown'}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {format(parseISO(f.follow_up_date), 'MMM d, yyyy')}
+                          </p>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          {isOverdue && <Badge variant="destructive" className="h-5 text-[10px] px-1.5">Overdue</Badge>}
+                          {isToday && <Badge variant="secondary" className="bg-amber-100 text-amber-800 h-5 text-[10px] px-1.5">Today</Badge>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
-                      return (
-                        <TableRow key={f.id} className={isOverdue ? 'bg-destructive/5' : ''}>
-                          <TableCell className="font-medium">
-                            {f.contact ? (
-                              <span
-                                className="hover:underline cursor-pointer text-primary"
-                                onClick={() => navigate(`/contacts/${f.contact!.id}`)}
-                              >
-                                {f.contact.first_name} {f.contact.last_name}
-                              </span>
-                            ) : 'Unknown'}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <span>{format(parseISO(f.follow_up_date), 'MMM d, yyyy')}</span>
-                              {isOverdue && <Badge variant="destructive" className="h-5 text-[10px] px-1.5">Overdue</Badge>}
-                              {isToday && <Badge variant="secondary" className="bg-amber-100 text-amber-800 h-5 text-[10px] px-1.5">Today</Badge>}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="capitalize">{f.status || 'Pending'}</Badge>
-                          </TableCell>
-                          <TableCell className="max-w-[200px] truncate text-muted-foreground text-sm">
-                            {f.notes || '-'}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button
-                              size="sm"
-                              variant="ghost"
-                              onClick={() => navigate(`/contacts/${f.contact?.id}`)}
-                            >
-                              View
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
+                {/* Desktop: table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Contact</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Notes</TableHead>
+                        <TableHead className="text-right">Action</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {followUps.slice(0, 5).map((f) => {
+                        const isOverdue = f.follow_up_date < new Date().toISOString().split('T')[0];
+                        const isToday = f.follow_up_date === new Date().toISOString().split('T')[0];
+                        return (
+                          <TableRow key={f.id} className={isOverdue ? 'bg-destructive/5' : ''}>
+                            <TableCell className="font-medium">
+                              {f.contact ? (
+                                <span
+                                  className="hover:underline cursor-pointer text-primary"
+                                  onClick={() => navigate(`/contacts/${f.contact!.id}`)}
+                                >
+                                  {f.contact.first_name} {f.contact.last_name}
+                                </span>
+                              ) : 'Unknown'}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-2">
+                                <span>{format(parseISO(f.follow_up_date), 'MMM d, yyyy')}</span>
+                                {isOverdue && <Badge variant="destructive" className="h-5 text-[10px] px-1.5">Overdue</Badge>}
+                                {isToday && <Badge variant="secondary" className="bg-amber-100 text-amber-800 h-5 text-[10px] px-1.5">Today</Badge>}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className="capitalize">{f.status || 'Pending'}</Badge>
+                            </TableCell>
+                            <TableCell className="max-w-[200px] truncate text-muted-foreground text-sm">
+                              {f.notes || '-'}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <Button size="sm" variant="ghost" onClick={() => navigate(`/contacts/${f.contact?.id}`)}>
+                                View
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

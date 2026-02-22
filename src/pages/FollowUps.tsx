@@ -76,32 +76,32 @@ export default function FollowUps() {
               <div
                 key={fu.id}
                 className={cn(
-                  'flex items-center justify-between rounded-xl border bg-card p-4 shadow-card transition-colors',
+                  'flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border bg-card p-4 shadow-card transition-colors gap-4',
                   isOverdue ? 'border-destructive/30 bg-destructive/5' : isToday ? 'border-warning/30 bg-warning/5' : 'border-border'
                 )}
               >
-                <div className="flex items-center gap-4">
+                <div className="flex items-start gap-4">
                   {isOverdue ? (
-                    <AlertTriangle className="h-5 w-5 text-destructive" />
+                    <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
                   ) : (
-                    <CalendarCheck className={cn('h-5 w-5', isToday ? 'text-warning' : 'text-muted-foreground')} />
+                    <CalendarCheck className={cn('h-5 w-5 shrink-0 mt-0.5', isToday ? 'text-warning' : 'text-muted-foreground')} />
                   )}
                   <div>
                     <p className="text-sm font-medium text-foreground">
                       {fu.contacts?.first_name} {fu.contacts?.last_name}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground mt-0.5">
                       {format(new Date(fu.follow_up_date), 'MMM d, yyyy')}
                       {fu.follow_up_time && ` at ${fu.follow_up_time}`}
                       {fu.notes && ` — ${fu.notes}`}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button size="sm" variant="outline" onClick={() => navigate(`/contacts/${fu.contact_id}`)}>
+                <div className="flex items-center gap-2 pl-9 sm:pl-0">
+                  <Button size="sm" variant="outline" className="flex-1 sm:flex-none" onClick={() => navigate(`/contacts/${fu.contact_id}`)}>
                     View
                   </Button>
-                  <Button size="sm" onClick={() => markComplete(fu.id)}>
+                  <Button size="sm" className="flex-1 sm:flex-none" onClick={() => markComplete(fu.id)}>
                     <CheckCircle2 className="mr-1 h-3.5 w-3.5" /> Done
                   </Button>
                 </div>
