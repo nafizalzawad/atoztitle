@@ -8,6 +8,7 @@ import {
   CalendarCheck,
   Calendar,
   BarChart3,
+  BarChart2,
   LogOut,
   Shield,
   Building2,
@@ -28,10 +29,11 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-  { label: 'Contacts', icon: Users, path: '/contacts', bdUserOnly: true },
-  { label: 'Add Contact', icon: UserPlus, path: '/contacts/new', bdUserOnly: true },
   { label: 'Events', icon: Calendar, path: '/events' },
   { label: 'Follow-ups', icon: CalendarCheck, path: '/follow-ups' },
+  { label: 'My Contacts', icon: Users, path: '/contacts', bdUserOnly: true },
+  { label: 'Add Contact', icon: UserPlus, path: '/contacts/new', bdUserOnly: true },
+  { label: 'My Report', icon: BarChart2, path: '/my-report' },
   { label: 'Admin Dashboard', icon: PieChart, path: '/admin-dashboard', adminOnly: true },
   { label: 'All Contacts', icon: UsersRound, path: '/contacts', adminOnly: true },
   { label: 'Reports', icon: BarChart3, path: '/reports', adminOnly: true },

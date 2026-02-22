@@ -297,11 +297,14 @@ export default function ContactDetail() {
     differenceInDays(new Date(), new Date(contact.warm_prospect_started_at)) >= 90;
 
   const totalExpenses = expenses.reduce((s, e) => s + Number(e.amount), 0);
+  const totalIncome = deals.reduce((s, d) => s + Number(d.deal_value || 0), 0);
+  const expensePercent = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : null;
   const totalDeals = deals.length;
   const pendingDealsCount = deals.filter(d => d.order_status === 'pending' || d.order_status === 'open').length;
   const lastDeal = deals[0]; // ordered by date desc
 
   const formatCurrency = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  const formatPercent = (n: number) => `${n.toFixed(1)}%`;
 
   return (
     <AppLayout
@@ -323,7 +326,7 @@ export default function ContactDetail() {
     >
       <div className="space-y-6">
         {/* CEO Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
             <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Deals</p>
             <p className="mt-1 text-2xl font-bold">{totalDeals}</p>
@@ -335,16 +338,39 @@ export default function ContactDetail() {
             <p className="text-[10px] text-muted-foreground mt-1">Currently in pipeline</p>
           </div>
           <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Income</p>
+            <p className="mt-1 text-2xl font-bold text-emerald-600">{formatCurrency(totalIncome)}</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Sum of all deal values</p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
             <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Total Expenses</p>
             <p className="mt-1 text-2xl font-bold text-destructive">{formatCurrency(totalExpenses)}</p>
             <p className="text-[10px] text-muted-foreground mt-1">Marketing/Follow-up spend</p>
           </div>
-          <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Last Order</p>
-            <p className="mt-1 text-lg font-bold truncate">
-              {lastDeal ? format(new Date(lastDeal.deal_date), 'MMM d, yyyy') : 'No deals'}
+          <div className={cn(
+            'rounded-xl border p-4 shadow-sm',
+            expensePercent === null
+              ? 'border-border bg-card'
+              : expensePercent > 20
+                ? 'border-destructive/30 bg-destructive/5'
+                : expensePercent > 10
+                  ? 'border-amber-300/50 bg-amber-50/50'
+                  : 'border-emerald-300/50 bg-emerald-50/50'
+          )}>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Expense %</p>
+            <p className={cn(
+              'mt-1 text-2xl font-bold',
+              expensePercent === null
+                ? 'text-muted-foreground'
+                : expensePercent > 20
+                  ? 'text-destructive'
+                  : expensePercent > 10
+                    ? 'text-amber-600'
+                    : 'text-emerald-600'
+            )}>
+              {expensePercent !== null ? formatPercent(expensePercent) : 'N/A'}
             </p>
-            <p className="text-[10px] text-muted-foreground mt-1">Most recent activity</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Of total client income</p>
           </div>
         </div>
 
@@ -563,7 +589,19 @@ export default function ContactDetail() {
                     <DollarSign className="h-4 w-4 text-primary" />
                     <h3 className="text-lg font-semibold text-foreground">Marketing Expenses</h3>
                   </div>
-                  <span className="text-sm font-semibold text-foreground">${totalExpenses.toLocaleString()}</span>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-foreground">{formatCurrency(totalExpenses)}</p>
+                    {expensePercent !== null ? (
+                      <p className={cn(
+                        'text-xs font-medium',
+                        expensePercent > 20 ? 'text-destructive' : expensePercent > 10 ? 'text-amber-600' : 'text-emerald-600'
+                      )}>
+                        {formatPercent(expensePercent)} of income
+                      </p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">No income recorded</p>
+                    )}
+                  </div>
                 </div>
                 <div className="space-y-2 mb-4">
                   {expenses.length === 0 ? (

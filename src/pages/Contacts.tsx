@@ -27,7 +27,7 @@ export default function Contacts() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [contacts, setContacts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [loading, setLoading] = useState(true);
   const [marketerFilter, setMarketerFilter] = useState<string>(
     searchParams.get('marketer') || 'all'

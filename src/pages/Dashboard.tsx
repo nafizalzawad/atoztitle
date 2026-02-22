@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { KPICard } from '@/components/crm/KPICard';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Users, UserPlus, Flame, Target, Handshake, Star,
   CalendarCheck, AlertTriangle, Clock, Calendar, CheckCircle2,
-  Plus
+  Plus, Search, X, BarChart2
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { format, isPast, isToday, parseISO } from 'date-fns';
@@ -60,6 +61,9 @@ export default function Dashboard() {
   const [followUps, setFollowUps] = useState<EnrichedFollowUp[]>([]);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('');
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -152,15 +156,80 @@ export default function Dashboard() {
     ? `${userName}'s Dashboard`
     : (role === 'admin' ? 'Admin Dashboard' : 'Dashboard');
 
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) {
+      navigate(`/contacts?q=${encodeURIComponent(q)}`);
+      setSearchQuery('');
+      setSearchOpen(false);
+    }
+  };
+
+  const handleSearchToggle = () => {
+    setSearchOpen((prev) => !prev);
+    if (!searchOpen) {
+      setTimeout(() => searchInputRef.current?.focus(), 80);
+    } else {
+      setSearchQuery('');
+    }
+  };
+
   return (
     <AppLayout
       title={displayTitle}
       subtitle="Overview"
       actions={
-        <Button onClick={() => navigate('/contacts/new')}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Contact
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Quick Search */}
+          <form onSubmit={handleSearchSubmit} className="flex items-center gap-1">
+            <div
+              className={`flex items-center overflow-hidden transition-all duration-300 rounded-md border border-border bg-background ${searchOpen ? 'w-44 sm:w-56 px-2' : 'w-0 px-0 border-transparent'
+                }`}
+              style={{ height: '36px' }}
+            >
+              <Input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search contacts…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') handleSearchToggle();
+                }}
+                className="h-full border-0 bg-transparent p-0 text-sm focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-muted-foreground"
+              />
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={searchOpen && searchQuery ? () => handleSearchSubmit() : handleSearchToggle}
+              className="h-9 w-9 p-0 shrink-0"
+              title={searchOpen ? 'Search' : 'Search contacts'}
+            >
+              {searchOpen && searchQuery ? (
+                <Search className="h-4 w-4" />
+              ) : searchOpen ? (
+                <X className="h-4 w-4" />
+              ) : (
+                <Search className="h-4 w-4" />
+              )}
+            </Button>
+          </form>
+
+          {/* Add Contact */}
+          <Button onClick={() => navigate('/contacts/new')}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Contact
+          </Button>
+
+          {/* My Report */}
+          <Button variant="outline" onClick={() => navigate('/my-report')}>
+            <BarChart2 className="mr-2 h-4 w-4" />
+            <span className="hidden sm:inline">My Report</span>
+          </Button>
+        </div>
       }
     >
       {/* SECTION 1: FOLLOW-UPS */}
