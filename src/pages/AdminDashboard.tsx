@@ -286,7 +286,11 @@ export default function AdminDashboard() {
                                         </thead>
                                         <tbody className="divide-y">
                                             {team.map(m => (
-                                                <tr key={m.id} className="hover:bg-muted/30 transition-colors">
+                                                <tr
+                                                    key={m.id}
+                                                    className="hover:bg-muted/30 transition-colors cursor-pointer"
+                                                    onClick={() => navigate(`/contacts?marketer=${m.id}`)}
+                                                >
                                                     <td className="px-5 py-3.5">
                                                         <div className="flex items-center gap-3">
                                                             <Avatar className="h-8 w-8">
